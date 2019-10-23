@@ -11,10 +11,10 @@ parts:
         com: minikube addons enable heapster; minikube addons enable ingress
 
       - cap: View the Minikube Dashboard, a web UI for managing deployments.
-        com: minikube service kubernetes-dashboard --namespace kube-system
+        com: minikube dashboard &
 
       - cap: Deploy the public nginx image from DockerHub into a pod. Nginx is an open source web server that will automatically download from Docker Hub if it’s not available locally.
-        com: kubectl run nginx --image nginx --port 80
+        com: kubectl create deployment nginx --image nginx
 
       - cap: Create a K8s Service for the deployment. This will expose the nginx pod so you can access it with a web browser.
         com: kubectl expose deployment nginx --type NodePort --port 80
@@ -37,6 +37,9 @@ parts:
       - cap: Let’s make a change to an HTML file in the cloned project. Open the /applications/hello-kenzan/index.html file in your favorite text editor (for example, you can use nano by running the command 'nano applications/hello-kenzan/index.html' in a separate terminal). Change some text inside one of the <p> tags. For example, change “Hello from Kenzan!” to “Hello from Me!”. Save the file. 
         com: echo ''
 
+      - cap: To work with the Docker daemon on your Mac/Linux host, use the docker-env command in your shell.
+        com: eval $(minikube docker-env)
+
       - cap: Now let’s build an image, giving it a special name that points to our local cluster registry.
         com: docker build -t 127.0.0.1:30400/hello-kenzan:latest -f applications/hello-kenzan/Dockerfile applications/hello-kenzan
 
@@ -44,7 +47,7 @@ parts:
         com: docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
 
       - cap: Now run the proxy container from the newly created image. (Note that you may see some errors; this is normal as the commands are first making sure there are no previous instances running.)
-        com: docker stop socat-registry; docker rm socat-registry; docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+        com: docker stop socat-registry; docker rm socat-registry; docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30401" --name socat-registry -p 30401:5000 socat-registry
 
       - cap: With our proxy container up and running, we can now push our hello-kenzan image to the local repository.
         com: docker push 127.0.0.1:30400/hello-kenzan:latest
