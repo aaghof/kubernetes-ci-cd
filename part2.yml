@@ -5,7 +5,7 @@ parts:
     steps:
 
       - cap: Start up the Kubernetes cluster with Minikube. 
-        com: minikube stop; minikube start --memory 8000 --cpus 2 --kubernetes-version v1.11.0
+        com: minikube stop; minikube start --memory 4000 --cpus 2 --kubernetes-version v1.11.0
 
       - cap: Before we do anything, let's make sure the private registry deployment we've setup in the previous part is available.
         com: kubectl rollout status deployment/registry
